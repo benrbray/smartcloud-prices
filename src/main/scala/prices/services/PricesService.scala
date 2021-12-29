@@ -5,7 +5,7 @@ import scala.util.control.NoStackTrace
 import prices.data._
 
 trait PriceService[F[_]] {
-  def getAll(): F[List[InstanceKind]]
+  def getPrice(kind: InstanceKind): F[PriceInfo]
 }
 
 object PriceService {

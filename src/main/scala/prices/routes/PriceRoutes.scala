@@ -10,15 +10,16 @@ import org.http4s.server.Router
 import prices.routes.protocol._
 import prices.services.PriceService
 
+
 final case class PriceRoutes[F[_]: Sync](priceService: PriceService[F]) extends Http4sDsl[F] {
 
   val prefix = "/prices"
 
-  implicit val pricesResponseEncoder = jsonEncoderOf[F, List[PriceResponse]]
+  implicit val pricesResponseEncoder = jsonEncoderOf[F, PriceResponse]
 
   private val get: HttpRoutes[F] = HttpRoutes.of {
-    case GET -> Root =>
-      priceService.getAll().flatMap(kinds => Ok(kinds.map(k => PriceResponse(k))))
+    case GET -> Root :? KindQueryParamMatcher(kind) =>
+      priceService.getPrice(kind).flatMap(k => Ok(PriceResponse(k)))
   }
 
   def routes: HttpRoutes[F] =

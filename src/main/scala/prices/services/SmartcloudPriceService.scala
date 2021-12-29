@@ -21,13 +21,9 @@ object SmartcloudPriceService {
   ) extends PriceService[F] {
 
     implicit val pricesEntityDecoder: EntityDecoder[F, List[String]] = jsonOf[F, List[String]]
-
-    val getAllUri = s"${config.baseUri}/instances"
-
-    override def getAll(): F[List[InstanceKind]] =
-      List("sc2-micro", "sc2-small", "sc2-medium") // Dummy data. Your implementation should call the smartcloud API.
-        .map(InstanceKind(_))
-        .pure[F]
+    
+    override def getPrice(kind: InstanceKind): F[PriceInfo] =
+      PriceInfo(kind, "TBD").pure[F]
 
   }
 

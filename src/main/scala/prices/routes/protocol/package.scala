@@ -11,5 +11,6 @@ package object protocol {
     QueryParamDecoder[String].map(InstanceKind.apply)
 
   object InstanceKindQueryParam extends QueryParamDecoderMatcher[InstanceKind]("instanceKind")
+  object KindQueryParamMatcher extends QueryParamDecoderMatcher[InstanceKind]("kind")
 
 }

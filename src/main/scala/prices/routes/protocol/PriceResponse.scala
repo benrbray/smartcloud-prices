@@ -5,7 +5,7 @@ import io.circe.syntax._
 
 import prices.data._
 
-final case class PriceResponse(value: InstanceKind)
+final case class PriceResponse(value: PriceInfo)
 
 object PriceResponse {
 
@@ -13,7 +13,8 @@ object PriceResponse {
     Encoder.instance[PriceResponse] {
       case PriceResponse(k) =>
         Json.obj(
-          "kind" -> k.getString.asJson
+          "kind" -> k.kind.getString.asJson,
+          "amount" -> k.amount.asJson
         )
     }
 
