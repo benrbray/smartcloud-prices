@@ -4,6 +4,7 @@ import cats.effect._
 import com.comcast.ip4s._
 import fs2.Stream
 import org.http4s.ember.server.EmberServerBuilder
+import org.http4s.ember.client.EmberClientBuilder
 import org.http4s.server.middleware.Logger
 import cats.syntax.semigroupk._
 
@@ -24,11 +25,14 @@ object Server {
       )
     )
 
+    val httpClientRes = EmberClientBuilder.default[IO].build
+
     val priceService = SmartcloudPriceService.make[IO](
       SmartcloudPriceService.Config(
         config.smartcloud.baseUri,
         config.smartcloud.token
-      )
+      ),
+      httpClientRes
     )
 
     val httpApp = (

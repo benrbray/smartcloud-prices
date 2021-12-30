@@ -13,8 +13,8 @@ object PriceResponse {
     Encoder.instance[PriceResponse] {
       case PriceResponse(k) =>
         Json.obj(
-          "kind" -> k.kind.getString.asJson,
-          "amount" -> k.amount.asJson
+          "kind" -> k.kind.asJson,
+          "amount" -> k.price.asJson
         )
     }
 

@@ -1,3 +1,3 @@
 package prices.data
 
-final case class PriceInfo(kind: InstanceKind, amount: String)
+final case class PriceInfo(kind: String, price: Double, timestamp: String)
