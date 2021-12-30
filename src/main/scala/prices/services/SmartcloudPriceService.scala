@@ -1,6 +1,8 @@
 package prices.services
 
 import cats.effect._
+import cats.implicits._
+import cats.data.EitherT
 
 import io.circe.generic.auto._
 
@@ -31,8 +33,10 @@ object SmartcloudPriceService {
     implicit val pricesEntityDecoder: EntityDecoder[F, PriceInfo] = jsonOf[F, PriceInfo]
     
     override def getPrice(kind: InstanceKind): F[PriceInfo] = httpClient.use { client =>
-      val uri = Uri.uri("http://0.0.0.0:9999") / "instances" / kind.getString
-      val auth = Authorization(Credentials.Token(AuthScheme.Bearer, "lxwmuKofnxMxz6O2QE1Ogh"))
+      // todo: safely convert string to uri with monadic error handling
+      val uri = Uri.unsafeFromString(config.baseUri) / "instances" / kind.getString
+
+      val auth = Authorization(Credentials.Token(AuthScheme.Bearer, config.token))
       val accept = Accept(MediaType.application.json)
 
       val request = Request[F](
