@@ -8,10 +8,11 @@ import org.http4s.dsl.Http4sDsl
 import org.http4s.server.Router
 
 import prices.routes.protocol._
-import prices.services.PriceService
+import prices.services.ClientService
 
+////////////////////////////////////////////////////////////
 
-final case class PriceRoutes[F[_]: Sync](priceService: PriceService[F]) extends Http4sDsl[F] {
+final case class PriceRoutes[F[_]: Sync](clientService: ClientService[F]) extends Http4sDsl[F] {
 
   val prefix = "/prices"
 
@@ -19,7 +20,7 @@ final case class PriceRoutes[F[_]: Sync](priceService: PriceService[F]) extends 
 
   private val get: HttpRoutes[F] = HttpRoutes.of {
     case GET -> Root :? KindQueryParamMatcher(kind) =>
-      priceService.getPrice(kind).flatMap(k => Ok(PriceResponse(k)))
+      clientService.price(kind).flatMap(k => Ok(PriceResponse(k)))
   }
 
   def routes: HttpRoutes[F] =

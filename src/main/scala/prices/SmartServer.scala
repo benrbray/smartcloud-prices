@@ -10,33 +10,25 @@ import cats.syntax.semigroupk._
 
 import prices.config.Config
 import prices.routes.InstanceKindRoutes
-import prices.services.SmartcloudInstanceKindService
 import prices.routes.PriceRoutes
-import prices.services.SmartcloudPriceService
+import prices.services.SmartcloudClientService
 
+////////////////////////////////////////////////////////////
 class SmartServer(config: Config) {
 
   val httpClientRes = EmberClientBuilder.default[IO].build
   
-  val instanceKindService = SmartcloudInstanceKindService.make[IO](
-      SmartcloudInstanceKindService.Config(
+  val clientService = SmartcloudClientService.make[IO](
+      SmartcloudClientService.Config(
         config.smartcloud.baseUri,
         config.smartcloud.token
       ),
       httpClientRes
     )
 
-  val priceService = SmartcloudPriceService.make[IO](
-    SmartcloudPriceService.Config(
-      config.smartcloud.baseUri,
-      config.smartcloud.token
-    ),
-    httpClientRes
-  )
-
   val httpApp = (
-    InstanceKindRoutes[IO](instanceKindService).routes
-    <+> PriceRoutes[IO](priceService).routes
+    InstanceKindRoutes[IO](clientService).routes
+    <+> PriceRoutes[IO](clientService).routes
   ).orNotFound
 
   val serverRes = EmberServerBuilder

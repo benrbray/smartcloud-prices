@@ -4,11 +4,12 @@ import scala.util.control.NoStackTrace
 
 import prices.data._
 
-trait InstanceKindService[F[_]] {
-  def getAll(): F[List[InstanceKind]]
+trait ClientService[F[_]] {
+  def instances(): F[List[InstanceKind]]
+  def price(kind: InstanceKind): F[PriceInfo]
 }
 
-object InstanceKindService {
+object ClientService {
 
   sealed trait Exception extends NoStackTrace
   object Exception {

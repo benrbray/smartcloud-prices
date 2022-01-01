@@ -8,9 +8,9 @@ import org.http4s.dsl.Http4sDsl
 import org.http4s.server.Router
 
 import prices.routes.protocol._
-import prices.services.InstanceKindService
+import prices.services.ClientService
 
-final case class InstanceKindRoutes[F[_]: Sync](instanceKindService: InstanceKindService[F]) extends Http4sDsl[F] {
+final case class InstanceKindRoutes[F[_]: Sync](clientService: ClientService[F]) extends Http4sDsl[F] {
 
   val prefix = "/instance-kinds"
 
@@ -18,7 +18,7 @@ final case class InstanceKindRoutes[F[_]: Sync](instanceKindService: InstanceKin
 
   private val get: HttpRoutes[F] = HttpRoutes.of {
     case GET -> Root =>
-      instanceKindService.getAll().flatMap(kinds => Ok(kinds.map(k => InstanceKindResponse(k))))
+      clientService.instances().flatMap(kinds => Ok(kinds.map(k => InstanceKindResponse(k))))
   }
 
   def routes: HttpRoutes[F] =
