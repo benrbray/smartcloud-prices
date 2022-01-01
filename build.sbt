@@ -13,6 +13,7 @@ lazy val root = (project in file("."))
       L.logback,
       L.pureConfig,
       T.munit,
+      T.munitCatsEffect,
       C.betterMonadicFor,
       C.kindProjector
     ),

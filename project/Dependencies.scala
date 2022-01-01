@@ -12,6 +12,7 @@ object Dependencies {
 
     // Test
     val munit = "0.7.29"
+    val munitCatsEffect = "1.0.0"
 
     // Compiler
     val betterMonadicFor = "0.3.1"
@@ -30,6 +31,7 @@ object Dependencies {
   object T { // Test dependencies
     // Scala
     val munit = "org.scalameta" %% "munit" % V.munit % Test
+    val munitCatsEffect = "org.typelevel" %% "munit-cats-effect-3" % V.munitCatsEffect % Test
   }
 
   object C { // Compiler plugins
