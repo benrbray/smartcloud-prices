@@ -2,9 +2,14 @@ package prices.services
 
 import cats.implicits._
 import cats.effect._
+import cats.Applicative
+
 import org.http4s._
 import org.http4s.circe._
+import org.http4s.client._
+import org.http4s.headers._
 
+import prices.errors._
 import prices.data._
 
 object SmartcloudInstanceKindService {
@@ -14,20 +19,36 @@ object SmartcloudInstanceKindService {
       token: String
   )
 
-  def make[F[_]: Concurrent](config: Config): InstanceKindService[F] = new SmartcloudInstanceKindService(config)
+  def make[F[_]: Concurrent](
+    config: Config,
+    client: Resource[F,Client[F]]
+  ): InstanceKindService[F]
+    = new SmartcloudInstanceKindService(config, client)
 
   private final class SmartcloudInstanceKindService[F[_]: Concurrent](
-      config: Config
+      config: Config,
+      client: Resource[F,Client[F]]
   ) extends InstanceKindService[F] {
 
     implicit val instanceKindsEntityDecoder: EntityDecoder[F, List[String]] = jsonOf[F, List[String]]
 
-    val getAllUri = s"${config.baseUri}/instances"
+    override def getAll(): F[List[InstanceKind]] = client.use { client =>
+      // todo: safely convert string to uri with monadic error handling
+      val uri = Uri.unsafeFromString(config.baseUri) / "instances"
 
-    override def getAll(): F[List[InstanceKind]] =
-      List("sc2-micro", "sc2-small", "sc2-medium") // Dummy data. Your implementation should call the smartcloud API.
-        .map(InstanceKind(_))
-        .pure[F]
+      // todo: avoid manually constructing auth before every request
+      val request = Request[F](
+        Method.GET,
+        uri=uri,
+        headers=Headers(
+          Authorization(Credentials.Token(AuthScheme.Bearer, config.token)),
+          Accept(MediaType.application.json)
+        )
+      )
+
+      client.expect[List[String]](request)
+        .map(x => x.map(InstanceKind(_)))
+    }
 
   }
 

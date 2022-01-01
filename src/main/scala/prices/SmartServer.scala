@@ -16,14 +16,15 @@ import prices.services.SmartcloudPriceService
 
 class SmartServer(config: Config) {
 
+  val httpClientRes = EmberClientBuilder.default[IO].build
+  
   val instanceKindService = SmartcloudInstanceKindService.make[IO](
       SmartcloudInstanceKindService.Config(
         config.smartcloud.baseUri,
         config.smartcloud.token
-      )
+      ),
+      httpClientRes
     )
-
-  val httpClientRes = EmberClientBuilder.default[IO].build
 
   val priceService = SmartcloudPriceService.make[IO](
     SmartcloudPriceService.Config(
