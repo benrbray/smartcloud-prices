@@ -6,10 +6,12 @@ import cats.data.Kleisli
 
 import com.comcast.ip4s._
 import fs2.Stream
+import scala.concurrent.duration._
 
 import org.http4s._
 import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.ember.client.EmberClientBuilder
+import org.http4s.client.middleware.RetryPolicy
 import org.http4s.server.middleware.Logger
 
 import prices.config.Config
@@ -36,7 +38,11 @@ object SmartApp {
 
 class SmartServer(config: Config) {
 
-  val httpClientRes = EmberClientBuilder.default[IO].build
+  // http client with retry-policy in case of server errors
+  val httpClientRes = EmberClientBuilder
+    .default[IO]
+    .withRetryPolicy(RetryPolicy(RetryPolicy.exponentialBackoff(10.seconds, 4)))
+    .build
   
   val clientService = SmartcloudClientService.make[IO](
       SmartcloudClientService.Config(
