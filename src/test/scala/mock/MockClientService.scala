@@ -29,8 +29,8 @@ object MockClientService {
 
     // endpoint: /instances/[KIND]
     override def price(kind: InstanceKind): F[PriceInfo] = {
-		// todo: return Option[PriceInfo]
-		mockData.find(info => info.kind == kind.kind).get.pure[F]
-	}
+      // todo: return Option[PriceInfo]
+      mockData.find(info => info.kind == kind.kind).get.pure[F]
+    }
   }
 }
