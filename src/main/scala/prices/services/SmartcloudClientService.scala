@@ -57,7 +57,7 @@ object SmartcloudClientService {
     // endpoint: /instances/[KIND]
     override def price(kind: InstanceKind): F[PriceInfo] = client.use { client =>
       // todo: safely convert string to uri with monadic error handling
-      val uri = Uri.unsafeFromString(config.baseUri) / "instances" / kind.getString
+      val uri = Uri.unsafeFromString(config.baseUri) / "instances" / kind.kind
 
       // todo: avoid manually constructing auth before every request
       val request = Request[F](
