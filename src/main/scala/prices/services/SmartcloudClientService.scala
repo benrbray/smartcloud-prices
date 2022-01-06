@@ -2,7 +2,6 @@ package prices.services
 
 import cats.implicits._
 import cats.effect._
-import cats.Applicative
 
 import org.http4s._
 import org.http4s.circe._
@@ -11,7 +10,6 @@ import org.http4s.headers._
 
 import io.circe.generic.auto._
 
-import prices.errors._
 import prices.data._
 
 ////////////////////////////////////////////////////////////
