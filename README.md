@@ -3,6 +3,18 @@
 Project Structure
 
 * The structure of my submission is similar to the original starter code.  
+* The `SmartcloudClientService` encapsulates the SmartCloud API and is responsible for making requests to the docker container.
+* `SmartApp` defines the `HttpRoutes` used by the server.
+* `SmartServer` glues everything together into a working server instance.
+* The `MockClientService` serves dummy data so that my code can be tested independently of the docker container. 
+
+Running the Project
+
+* To test the project:
+    - `sbt test`
+* To run the project:
+    - Make sure the docker container is running with `docker run -p 9999:9999 smartpayco/smartcloud:latest`
+    - Then, `sbt run` will start a local server on port `8080`.
 
 Endpoints
 
@@ -29,13 +41,13 @@ Endpoints
 Features
 
 * When the SmartCloud API returns a `500 Internal Server Error`, the http client uses an exponential backoff retry policy to attempt to return a result.
-* When the SmartCloud API returns a `529 Too Many Requests`  
 
 Things that could be improved with more time:
 
+* This is my first time writing `Scala` (as well as `cats`, `cats-effect`, `http4s`).  With more time/experience, I'd become more familiar with Scala idioms and best practices.
+* I don't handle the SmartCloud API's `529 Too Many Requests` when the rate limit is reached.  I had difficulty figuring out how to elegantly handle different response status codes, mostly due to my lack of experience with Scala and `http4s`.  With more time, I would want to use some kind of `MonadError` (perhaps with a custom error type) to exit early from the main logic and invoke an error handler.  Here's [an example of some Haskell code I wrote](https://github.com/benrbray/borscht-hs/blob/master/src/Borscht/Commands/SearchCmd.hs#L227) using a similar pattern. 
 * Test coverage is not 100%.  For instance, I don't have any tests checking that `SmartServer` uses the configuration files correctly.  I also don't have tests for the `RetryPolicy`.
 * Since the Docker container which serves the SmartCloud API is rate-limited and prone to server failures, all of the tests currently use a `MockClientService` to test the behavior of the routes I implemented.  Also, the tests only test the `SmartApp` implementation, and I don't include any tests for `SmartServer`, which runs the actual server.  In a production setting, it would also be important to directly test the interaction between these local/remote servers.  This would probably involve mocking the SmartCloud API so that it never fails (or, so that it fails in a controlled way) and running automated tests in a docker container.
-* This is my first time writing `Scala` (as well as `cats`, `cats-effect`, `http4s`).  With more time/experience, I'd become more familiar with Scala idioms and best practices.
 
 Other possible improvements:
 
